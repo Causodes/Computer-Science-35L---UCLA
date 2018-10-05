@@ -1,0 +1,90 @@
+Name: Tian Ye
+UID: 704931660
+TA: Jeremy Rotman
+
+Exercise 1.1: Moving around in Emacs
+
+    1. Use Emacs to edit the file exer1.html.
+		C-x C-f e x e r 1 . h t m l Enter
+		
+    2. Move the cursor to just after the first occurrence of the word "HTML" (all upper-case).
+		C-s H T M L Enter
+		
+    3. Now move the cursor to the start of the first later occurrence of the word "scavenger".
+		C-s s c a v e n g e r Enter M-b
+		
+    4. Now move the cursor to the start of the first later occurrence of the word 		"self-referential".
+		C-s s e l f - r e f e r e n t i a l Enter M-b M-b
+		
+    5. Now move the cursor to the start of the first later occurrence of the word "arrow".
+		C-s a r r o w Enter M-b
+		
+    6. Now move the cursor to the end of the current line.
+		C-e
+		
+    7. Now move the cursor to the beginning of the current line.
+		C-a
+		
+    8. Doing the above tasks with the arrow keys takes many keystrokes, or it involves holding down keys for a long time. Can you think of a way to do it with fewer keystrokes by using some of the commands available in Emacs?
+		C-e moves to the end of the current line and C-a moves to the beginning of the current line.
+		
+    9. Did you move the cursor using the arrow keys? If so, repeat the above steps, without using the arrow keys.
+		no
+		
+    10. When you are done, exit Emacs.
+		C-x C-c y
+
+Exercise 1.2: Deleting text in Emacs
+
+    1. Use Emacs to edit the file exer2.html. The idea is to delete its HTML comments; the resulting page should display the same text as the original.
+		C-x C-f e x e r 2 . h t m l Enter
+		
+    2. Delete the 18th line, which is an HTML comment. <!-- HTML comments look like this. -->
+		C-s < ! - - Enter C-a C-k
+		
+    3. Delete the HTML comment containing the text "DELETE-ME DELETE-ME DELETE-ME".
+		C-s D E L E T E Enter C-a C-k
+		
+    4. Delete the HTML comment containing the text "https://en.wikipedia.org/wiki/HTML_comment#Comments".
+		C-s < ! - - Enter C-a C-k C-n C-k C-n C-k
+		
+    5. There are three more HTML comments; delete them too.
+		C-s < ! - - Enter C-b C-b C-b Delete Delete Delete Delete Delete Delete Delete C-n C-a C-k C-k C-k C-k C-k C-k C-k C-s < ! - - Enter C-a C-k
+		
+Exercise 1.3: Inserting text in Emacs
+
+    1. Use Emacs to edit the file exer3.html.
+		C-x C-f e x e r 3 . h t m l Enter
+		
+    2. Change the first two instances of "Assignment 1" to "Assignment 42".
+		C-s A s s i g n m e n t Space 1 Enter Backspace 4 2 C-s A s s i g n m e n t Space 1 Enter Backspace 4 2
+		
+    3. Change the first instance of "UTF-8" to "US-ASCII".
+		M-< C-s U T F - 8 Enter Backspace Backspace Backspace Backspace S - A S C I I
+		
+    4. Ooops! The file is not ASCII so you need to fix that. Remove every line containing a non-ASCII character. You can find the next non-ASCII character by searching for the regular expression [^[:ascii:]].
+		C-M-s [ ^ [ : a s c i i : ] ] Enter C-a C-k
+	
+    5. Insert an empty line after the first line containing "</ol>".
+    When you finish, save the text file and exit Emacs. As before, use the diff command to check your work.
+		M-< C-s < / o l > Enter Enter C-x C-c y
+		
+Exercise 1.4: Other editing tasks in Emacs6
+
+    1. Execute the command "cat exer2.html exer2.diff >exer4.html" to create a file exer4.html that contains a copy of exer2.html followed by a copy of exer2.diff.
+		
+    2. Use Emacs to edit the file exer4.html. The idea is to edit the file so that it looks identical to exer1.html on a browser, but the file itself is a little bit different internally.
+	
+    3. Go to the end of the file. Copy the new lines in the last chunk of diff output, and paste them into the correct location earlier in the file.
+		M-> C-r - < C-f C-@ C-e C-w M-g g 3 9 8 Enter C-y
+		
+    4. Repeat the process, until the earlier part of the file is identical to what was in the original.
+		
+		
+    5. Delete the last part of the file, which contains the diff output.
+    6. … except we didn't really want to do that, so undo the deletion.
+    7. Turn the diff output into a comment, by surrounding it with "<!--" and "-->".
+    8. Now let's try some search and replaces. Search the text document for the pattern "<ol>". How many instances did you find? Use the search and replace function to replace them all with the final-caps equivalent "<oL>".
+    9. Check your work with viewing exer4.html with an HTML browser, and by running the shell command "diff -u exer1.html exer4.html >exer4.diff". The only differences should be changes from "<ol>" to "<oL>", and a long HTML comment at the end.
+
+	

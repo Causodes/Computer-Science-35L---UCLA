@@ -168,7 +168,7 @@ Exercise 1.6: Running Elisp code
 	
 		The probability is nearly 100%. We can see this using a simple geometric sequence: 
 		
-		Assume the range of possible positive values is n, the first number multiplied is x and the second number multiplied is y. We know that the product is invalid if x * y > n, as the value will overflow.
+		Assume the range of possible positive values is n, the first number multiplied is x, and the second number multiplied is y. We know that the product is invalid if x * y > n, as the value will overflow.
 		
 		Let us set x = 2. There is a 1/n probability such that x = 2. If x = 2, then 1/2 of all possible values for y will cause x * y to overflow (any y such that y > n/2 will cause an overflow). Hence the probability that this case creates an overflow is 1/n * 1/2.
 		

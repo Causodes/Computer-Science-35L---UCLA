@@ -79,12 +79,105 @@ Exercise 1.4: Other editing tasks in Emacs6
 		M-> C-r - < C-f C-@ C-e C-w M-g g 3 9 8 Enter C-y
 		
     4. Repeat the process, until the earlier part of the file is identical to what was in the original.
-		
+		M-> C-r < ! - - C-r C-r C-a C-@ C-u 4 C-n C-e M-w M-g g 3 8 3 Enter C-a C-@ C-e Backspace
+		C-y C-a C-f Delete C-p C-f Delete C-p C-f Delete C-p C-f Delete C-p C-f Delete
+		M-> C-r < ! - - C-r C-r C-r C-@ C-n 3 C-n M-w M-g g 3 4 0 Enter C-y C-a C-f Delete C-p C-f 	Delete
+		M-> C-r < ! - - C-r C-r C-r C-r C-@ C-e M-w M-g g 1 2 7 Enter C-y
+		M-> C-r < ! - - C-r C-r C-r C-r C-r C-@ C-n C-e M-w M-g g 1 8 Enter C-y
 		
     5. Delete the last part of the file, which contains the diff output.
+		M-< C-s - - - C-s C-a C-@ M-> Delete
+		
     6. … except we didn't really want to do that, so undo the deletion.
+		C--
+		
     7. Turn the diff output into a comment, by surrounding it with "<!--" and "-->".
+		- - > C-r - - - C-r C-r C-a < ! - - SP M-g g 4 1 3 Enter < ! - - M-g g 4 2 2 Enter < ! - - M-g g 4 3 4 Enter < ! - - 
+		M-g g 4 4 0 Enter C-e C-b C-b C-b C-b C-b < ! - - M-g g 4 4 5 Enter < ! - - M-g g 4 5 5 Enter < ! - -
+		
     8. Now let's try some search and replaces. Search the text document for the pattern "<ol>". How many instances did you find? Use the search and replace function to replace them all with the final-caps equivalent "<oL>".
+		M-> C-r < o l > C-r C-r C-r C-r C-r C-r 
+		7 instances found
+		M-< M-% < o l > Enter < o L > Enter !
+		
     9. Check your work with viewing exer4.html with an HTML browser, and by running the shell command "diff -u exer1.html exer4.html >exer4.diff". The only differences should be changes from "<ol>" to "<oL>", and a long HTML comment at the end.
+	
+Exercise 1.5: Doing commands in Emacs
+
+    1. Create a new directory named "junk" that's right under your home directory.
+		M-x m k d i r Enter j u n k Enter
+		
+    2. In that directory, create a C source file hello.c that contains the following text. Take care to get the text exactly right, with no trailing spaces or empty lines, with the initial # in the leftmost column of the first line, and with all other lines indented to match exactly as shown:
+
+    #include <stdio.h>
+    int
+    main (void)
+    {
+      char n = '\n', b = '\\', q = '"';
+      char const *p = "#include <stdio.h>%cint%cmain (void)%c{%c  char n = '%cn', b = '%c%c', q = '%c';%c  char const *p = %c%s%c;%c  printf (p, n, n, n, n, b, b, b, q, n, q, p, q, n, n, n, n);%c  return 0;%c}%c";
+      printf (p, n, n, n, n, b, b, b, q, n, q, p, q, n, n, n, n);
+      return 0;
+    }
+		C-x C-f j u n k / h e l l o . c Enter
+		
+    3. Compile this file, using the Emacs M-x compile command.
+		M-x c o m p i l e Enter C-@ C-a Delete g c c Space - o Space h e l l o Space h e l l o . c Enter
+		
+    4. Run the compiled program, and put its output into a new Emacs buffer named hello-out.
+		C-x b h e l l o - o u t Enter C-u M-! . / h e l l o Enter
+		
+    5. Copy this buffer's contents directly into the log that you're maintaining for this exercise. (You are using Emacs to maintain the log, aren't you?)
+		C-@ M-> M-w C-x C-f k e y 1 . t x t Enter C-y
+		
+		#include <stdio.h>
+		int
+		main (void)
+		{
+			char n = '\n', b = '\\', q = '"';
+			char const *p = "#include <stdio.h>%cint%cmain (void)%c{%c  char n = '%cn', b = '%c%c', q = '%c';%c  char const *p = %c%s%c;%c  printf (\
+			p, n, n, n, n, b, b, b, q, n, q, p, q, n, n, n, n);%c  return 0;%c}%c";
+			printf (p, n, n, n, n, b, b, b, q, n, q, p, q, n, n, n, n);
+			return 0;
+		}
+
+Exercise 1.6: Running Elisp code
+
+    1. Visit Emacs's *scratch* buffer.
+		C-x b Enter
+		
+    2. In the buffer, seed the random number generator with your student ID as a string, dashes included. For example, if your student ID is 123-456-789, evaluate (random "123-456-789"). Use C-j (eval-print-last-sexp) to evaluate the expression, and record the result that you get.
+		( r a n d o m Space " 7 0 4 - 9 3 1 - 6 6 0 " ) C-j C-@ C-e M-w C-x C-f k e y 1 . t x t C-y 
+    -1718257620645894777
+		
+    3. In the buffer, assign two random integers to the global variables x and y. Start by executing (setq x (random)). Again, use C-j.
+		( s e t q Space x Space ( r a n d o m ) ) C-j
+		( s e t q Space y Space ( r a n d o m ) ) C-j
+	
+    4. What is the product of the two variables? You can find this out by evaluating (* x y). What do you observe about the result? If the answer is the correct mathematical answer, keep trying again with a different pair of random integers until you get an answer that is not mathematically correct.
+		The product of the two variables was -865277015851254822; I knew this was not mathematically correct as the product of two positive numbers cannot be negative.
+		
+    5. Try evaluating (* x y) again, but this time with M-: (eval-expression). What difference do you observe in the output?
+		M - : Space ( * Space x Space y ) Enter
+		The result output the original base-10 value and also additionally included hexadecimal and octadecimal values.
+	
+    6. Are the two random integers truly random in the mathematical sense? If not, what's not random about them?
+		C-h f r a n d o m Enter C-x b * H e l p * Enter
+		The values are not truly random as they are generated via a computer algorithm. Hence they are pseudorandom. Furthermore, the computer algorithm is limited from -2305843009213693952 to 2305843009213693951 in terms of range, due to memory constraints, rather than being the ideal -infinity to infinity.
+		
+    7. Assuming (random) is truly random, what is the probability that the two-variable product mentioned above is mathematically incorrect? Explain how you calculated this.
+	
+		The probability is nearly 100%. We can see this using a simple geometric sequence: 
+		
+		Assume the range of possible positive values is n, the first number multiplied is x and the second number multiplied is y. We know that the product is invalid if x * y > n, as the value will overflow.
+		
+		Let us set x = 2. There is a 1/n probability such that x = 2. If x = 2, then 1/2 of all possible values for y will cause x * y to overflow (any y such that y > n/2 will cause an overflow). Hence the probability that this case creates an overflow is 1/n * 1/2.
+		
+		Let us now set x = 3. There is again a 1/n probability such that x = 3. If x = 3, then 2/3 of all possible values will cause y to overflow (any y such that y > n/3 will cause an overflow). Hence the probability that this case creates an overflow is 1/n * 2/3.
+		
+		We can now see a pattern forming: the probability for an overflow given an arbitrary x value is 1/n * (x-1)/x. Summing all the probabilities and distributing the 1/n, we yield the following:
+		
+		1/n * (1/2 + 2/3 + 3/4 + ... n-2/n-1 + n-1/n). For sufficiently large n, such as in the case of this problem, this sequence converges on 1 as n approaches infinity. The same holds for the negative half of the range, and we can therefore draw the same conclusion.
+		
+		Hence the probability that two truly random numbers will overflow when multiplied together is nearly 100% for the given range.
 
 	

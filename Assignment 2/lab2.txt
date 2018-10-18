@@ -1,0 +1,112 @@
+Tian Ye
+704931660
+Lab 2
+TA: Jeremy Rotman
+
+To change locale to "C" use the following command:
+	export LC_ALL='C'
+
+Sorting words and outputting it into a file:
+	touch words
+	sort /usr/share/dict/words > words
+	
+To get the text file use the following:
+	wget https://web.cs.ucla.edu/classes/fall18/cs35L/assign/assign2.html
+	mv assign2.html assign2.txt
+	
+tr -c 'A-Za-z' '[\n*]' < assign2.txt
+	This command outputs lines containing only alphebetical characters; any non alphabetical character is subsequently replaced with a \n.
+
+tr -cs 'A-Za-z' '[\n*]' < assign2.txt
+	Similar to the above command, except this one only outputs one instance of repeated characters.
+	
+tr -cs 'A-Za-z' '[\n*]' < assign2.txt | sort
+	This command additionally sorts the output
+	
+tr -cs 'A-Za-z' '[\n*]' < assign2.txt | sort -u
+	This command removes all repeated phrases, in addition to sorting the output
+	
+tr -cs 'A-Za-z' '[\n*]' < assign2.txt | sort -u | comm - words
+	This command parses the previous output from tr -cs 'A-Za-z' '[\n*]' < assign2.txt | sort -u and has an output of three columns:
+		Column 1 contains words unique to assign2.txt
+		Column 2 contains words unique to words
+		Column 3 contains words that are found in both files
+		
+tr -cs 'A-Za-z' '[\n*]' < assign2.txt | sort -u | comm -23 - words
+	This command instead only outputs the first column in comparison to the previous command.
+	
+To download the Hawaiian Dictionary:
+	wget http://mauimapp.com/moolelo/hwnwdseng.html
+	
+To build the bash script:
+
+	#!/bin/bash
+	
+	# remove space before every line
+	sed '^s/^[[:blank:]]*//g' |
+	
+	# find all matches with opening and closing td tags and list on one line
+	grep -E "<td>.+<\/td>" |
+	
+	# deletes all english translations via deleting every odd line
+	sed -n '1~2!p'
+	
+	# remove every instance of "<u>"
+	sed 's/<u>//g' |
+	
+	# remove every instance of "</u>"
+	sed 's/<\/u>//g' |
+	
+	# remove every instance of "<td>"
+	sed 's/<td>//g' |
+	
+	# remove every instance of "</td>"
+	sed 's/<\/td>//g' |
+	
+	# convert all upper to lower
+	tr '[:upper:]' '[:lower:]' |
+	
+	# replace spaces and commas with \n
+	tr ' ,' '\n' |
+	
+	# replace all backticks with apostrohpe
+	sed "s/\`/\'/g" |
+	
+	# remove any lines containing non hawaiian characters
+	sed "/[^pk\'mnwlhaeiou]/d" |
+	
+	# remove any lines that still contain blanks
+	sed '/^$/d' |
+	
+	# sort remaining lines, removing any duplicates
+	sort -u
+	
+To give user permission to run the script:
+	chmod u+x
+	
+Create the Hawaiian Dictionary
+	cat hwnwdseng.htm | ./buildwords > hwords
+	
+Modifying the last command such that it checks the spelling of Hawaiian instead:
+    cat foo.html bar.html | tr '[:upper:]' '[:lower:]' | tr -cs "pk\'mnwlhaeiou" '[\n*]' | sort -u |  comm -23 - hwords > wrongHawaii
+	
+Then by running the following command we are able to check number of incorrectly spelled words:
+	tr '[:upper:][:lower:] < assign2.txt | tr -cs "pk\'mnwlhaeiou'" '[\n*]' | sort -u|c\ omm -23 -hwords > wrongHawaii
+	
+	This yields 198 mispelled Hawaiian words from the command:
+		wc -| wrongHawaii
+
+By running the following command we find the number of mispelled Hawaiian words that are correctly spelled in English:
+	cat wrongHawaii | sort -u | comm -12 - words > correctEnglish
+	
+	This yields 108 words:
+		wc -l correctEnglish
+		
+		Examples of words mispelled in Hawaiian but not English: "mail, how, keep"
+		
+By running the following command we find the number of mispelled English words that are correctly spelled in Hawaiian:
+	tr -cs 'A-Za-z' '[\n*]' < assign2.html | sort -u | comm -23 - words > wrongEnglish
+	cat wrongEnglish | sort -u | comm -12 -hwords > correctHawaiian
+	wc -l correctHawaiian
+	
+	This yields 3 words: halau, wiki, and lau

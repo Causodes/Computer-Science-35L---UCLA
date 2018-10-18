@@ -1,0 +1,70 @@
+#!/bin/bash
+
+# set directory as argument
+dir = $1
+
+# sort all listed directories
+SORTEDALL = 'ls -a $dir | sort'
+
+# declare array to store files
+declare -a FILE
+
+# number of elements
+let n = 0;
+
+for file in $SORTEDALL
+do
+
+	# if given file is not readable
+	if [! -r "$dir/$file" ]
+		then
+			echo "Error: unable to read $file"
+		continue
+	
+	# if given file is not a regular file or a symbolic link/subdirectory	
+	elif [ ! -f "$dir/$file" ] || [ -L "$dir/$file" ] || [ -d "$dir/$file"] 
+		then continue
+	
+	# push file into array
+	elif [ -f "$dir/$file" ]
+		FILE[$n] = "$dir/$file"
+		let n = n + 1
+	fi
+done
+
+# loop through files in array and compare
+for(i = 0; i < $n; i++)
+do
+	for(j = i + 1; j < $n; j++)
+	do
+
+		# check for duplicates
+		if cmp -s "${FILE[$i]}" "${FILE[$j]}"
+			then
+				
+				# file 1 begins with a '.' and file 2 does not begin with a '.'
+				if [ ${FILE[$i]:0:1} == '.' ] && [ ${FILE[$j]:0:1} != '.']
+					then
+						rm "${FILE[$j]}"
+						ln "${FILE[$i]}" "${FILE[$j]}"
+						
+				# file 1 does not begin with a '.' and file 2 begins with a '.'
+				elif [ ${FILE[$i]:0:1} != '.' ] && [ ${FILE[$j]:0:1} == '.']
+					then
+						rm "${FILE[$i]}"
+						ln "${FILE[$j]}" "${FILE[$i]}"
+						
+				# perform strict comparison
+				elif [ "${FILE[$i]}" > "${FILE[$j]}" ]
+						rm "${FILE[$j]}"
+						ln "${FILE[$i]}" "${FILE[$j]}"
+				elif [ "${FILE[$j]}" > "${FILE[$i]}" ]
+						rm "${FILE[$i]}"
+						ln "${FILE[$j]}" "${FILE[$i]}"
+				
+				#continue to next iteration
+				else
+					continue
+				fi
+	done
+done

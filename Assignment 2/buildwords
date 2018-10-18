@@ -1,0 +1,40 @@
+#!/bin/bash
+
+	# remove space before every line
+	sed '^s/^[[:blank:]]*//g' |
+
+	# find all matches with opening and closing td tags and list on one line
+	grep -E "<td>.+<\/td>" |
+
+	# deletes all english translations via deleting every odd line
+	sed -n '1~2!p'
+
+	# remove every instance of "<u>"
+	sed 's/<u>//g' |
+
+	# remove every instance of "</u>"
+	sed 's/<\/u>//g' |
+
+	# remove every instance of "<td>"
+	sed 's/<td>//g' |
+
+	# remove every instance of "</td>"
+	sed 's/<\/td>//g' |
+
+	# convert all upper to lower
+	tr '[:upper:]' '[:lower:]' |
+
+	# replace spaces and commas with \n
+	tr ' ,' '\n' |
+
+	# replace all backticks with apostrohpe
+	sed "s/\`/\'/g" |
+
+	# remove any lines containing non hawaiian characters
+	sed "/[^pk\'mnwlhaeiou]/d" |
+
+	# remove any lines that still contain blanks
+	sed '/^$/d' |
+
+	# sort remaining lines, removing any duplicates
+	sort -u

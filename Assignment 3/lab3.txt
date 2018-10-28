@@ -1,0 +1,90 @@
+Tian Ye
+Lab 3
+
+I grabbed the Coreutils 8.29 source code compressed tarball, the GNU keyring, and hte Coreutils 8.29 signature using the following commands:
+wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-8.29.tar.xz
+wget https://ftp.gnu.org/gnu/gnu-keyring.gpg
+wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-8.29.tar.xz.sig
+
+I then proceeded to verify the signature:
+gpg --verify --keyring ./gnu-keyring.gpg coreutils-8.29.tar.xz.sig
+
+The signature verification displayed the following:
+
+gpg: Signature made Wed 27 Dec 2017 10:29:05 AM PST using RSA key ID 306037D9
+gpg: /u/ma/ugrad/yet/.gnupg/trustdb.gpg: trustdb created
+gpg: Good signature from "Pádraig Brady <P@draigBrady.com>"
+gpg:                 aka "Pádraig Brady <pbrady@redhat.com>"
+gpg:                 aka "Pádraig Brady <pixelbeat@gnu.org>"
+gpg: WARNING: This key is not certified with a trusted signature!
+gpg:          There is no indication that the signature belongs to the owner.
+Primary key fingerprint: 6C37 DC12 121A 5006 BC1D  B804 DF6F D971 3060 37D9
+
+I then extracted the tar file using the following command:
+tar -xf coreutils-8.29.tar.xz
+
+Changing directories into the folder:
+cd coreutils-8.29/
+
+Configuring the path:
+./configure --prefix=/ma/ugrad/yet/coreutilsInstall
+
+Compile and install coreutils:
+make
+make install
+
+Navigating into the bin directory:
+cd ..
+cd ~/coreutilsInstall/
+cd bin
+
+Using the ls command: ls -a -A yields the following:
+
+.         cat     comm    dir        expr    hostid   logname  mv      paste     pwd       sha1sum    sleep   sync     tr        uniq    whoami
+..        chcon   cp      dircolors  factor  id       ls       nice    pathchk   readlink  sha224sum  sort    tac      true      unlink  yes
+[         chgrp   csplit  dirname    false   install  md5sum   nl      pinky     realpath  sha256sum  split   tail     truncate  uptime
+b2sum     chmod   cut     du         fmt     join     mkdir    nohup   pr        rm        sha384sum  stat    tee      tsort     users
+base32    chown   date    echo       fold    kill     mkfifo   nproc   printenv  rmdir     sha512sum  stdbuf  test     tty       vdir
+base64    chroot  dd      env        groups  link     mknod    numfmt  printf    runcon    shred      stty    timeout  uname     wc
+basename  cksum   df      expand     head    ln       mktemp   od      ptx       seq       shuf       sum     touch    unexpand  who
+
+Note that it still lists . and ..
+
+Changing back to the original directory:
+cd
+cd Assignment\ 3/coreutils-8.29
+
+Creating a patch file and copying contents into a file:
+wget "https://debbugs.gnu.org/cgi/bugreport.cgi?bug=30963;
+filename=0001-ls-A-now-overrides-a.patch;att=1;msg=10"
+
+Renaming for ease of access:
+
+mv 'bugreport.cgi?bug=30963;%0Afilename=0001-ls-A-now-overrides-a.patch;att=1;msg=10' patch_30963
+
+
+Removing leading slashes from patch file and applying patch:
+patch -p1 < patch_30963
+
+Recompiling:
+make
+
+Using autoreconf to reset date and eliminate timestamp error:
+autoreconf
+
+Recompiling:
+make
+
+Navigating into the bin directory:
+cd ..
+cd ~/coreutilsInstall/
+cd bin
+
+Confirmed success of patch via comparing output of the follwing commands:
+./ls -a
+./ls -aA
+
+The second command no longer displays . and .. that the former does.
+
+Finally testing patch using given test case:
+make check TESTS=tests/ls/a-option.sh

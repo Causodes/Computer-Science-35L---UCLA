@@ -1,0 +1,7 @@
+1. The patch should improve performance as it removes an if statement that is present in the pre-patched version.
+
+2. Any other scripts that rely on the fuctionality of "ls" may have errors if they relied on the previous functionality of the command.
+
+3. An index error occurs as the function relies on the number of lines in the file, being 0 for an empty file.
+
+4. There is a syntax error when running the function with python3 as opposed to python as IOError behaves differently in python2 than python3.

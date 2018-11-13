@@ -1,0 +1,114 @@
+Tian Ye
+704931660
+Lab 4
+
+Extracting coreutils:
+wget https://web.cs.ucla.edu/classes/fall18/cs35L/assign/coreutils-with-bug.tar.gz
+
+Changing directories into unzipped location:
+cd coreutils-with-bug
+
+Configuring path and compiling:
+./configure --prefix=/u/ma/ugrad/yet/CS35L/Assignment4/install
+make
+
+This yields the following error:
+
+In file included from utimecmp.c:41:0:
+utimens.h:2:5: error: conflicting types for 'futimens'
+ int futimens (int, char const *, struct timespec const [2]);
+     ^
+In file included from utimecmp.h:25:0,
+                 from utimecmp.c:25:
+/usr/include/sys/stat.h:373:12: note: previous declaration of 'futimens' was here
+ extern int futimens (int __fd, const struct timespec __times[2]) __THROW;
+            ^
+make[3]: *** [utimecmp.o] Error 1
+make[3]: Leaving directory `/w/home.16/ma/ugrad/yet/CS35L/Assignment4/coreutils-with-bug/lib'
+make[2]: *** [all] Error 2
+make[2]: Leaving directory `/w/home.16/ma/ugrad/yet/CS35L/Assignment4/coreutils-with-bug/lib'
+make[1]: *** [all-recursive] Error 1
+make[1]: Leaving directory `/w/home.16/ma/ugrad/yet/CS35L/Assignment4/coreutils-with-bug'
+make: *** [all] Error 2
+
+The error is thrown as there exist two functions with the same name.
+
+To patch the error I download the patch:
+wget https://web.cs.ucla.edu/classes/fall18/cs35L/assign/coreutils.diff
+
+Moving patch into folder and applying:
+patch -p0 < coreutils.diff
+make
+
+The compilation is successful as one of the coreutils_futimens was renamed to coreutils_tee.
+make install
+
+Creating a temp directory per the lab instructions:
+tmp=$(mktemp -d)
+cd $tmp
+touch -d '1918-11-11 11:00 GMT' wwi-armistice
+touch now
+sleep 1
+touch now1
+TZ=UTCO ~/CS35L/Assignment4/install/bin/ls -lt --full-time wwi-armistice now now1
+
+This outputs the following:
+-rw-r--r-- 1 yet maugrad 0 1918-11-11 11:00:00.000000000 +0000 wwi-armistice
+-rw-r--r-- 1 yet maugrad 0 2018-11-05 05:44:36.484390313 +0000 now1
+-rw-r--r-- 1 yet maugrad 0 2018-11-05 05:44:28.501120294 +0000 now
+
+Continuing the instructions:
+cd
+rm -fr $tmp
+
+We see that the wwi-armistice file is in the wrong location; it should be at the bottom as it is the oldest file.
+
+Entering gdb to search for cause of error:
+
+gdb ~/CS35L/Assignment4/install/bin/ls
+help all
+break compare_mtime
+run -lt
+stepi
+list
+
+We see that the incorrect time calculation results from integer overflow. To patch this issue we perform the following:
+
+Changing directories back to location of buggy coreutils:
+cd CS35L/Assignment4/coreutils-with-bug/
+
+Creating a copy of the bad function:
+cp lib/timespec.h patch
+
+Editing the function:
+emacs patch
+
+Changing the subtraction operation to a direct comparison:
+
+timespec_cmp (struct timespec a, struct timespec b)
+{
+  if(a.tv_sec < b.tv_sec)
+        return -1;
+  else if(a.tv_sec > b.tv_sec)
+        return 1;
+  else
+        return 0;
+}
+
+Creating patch file:
+diff -u lib/timespec.h patch > lab4.diff
+
+Testing in an aribitrary nontemp directory:
+
+touch -d '1918-11-11 11:00 GMT' wwi-armistice
+touch now
+sleep 1
+touch now1
+TZ=UTCO ~/CS35L/Assignment4/install/bin/ls -lt --full-time wwi-armistice now now1
+
+This yields the following:
+-rw-r--r-- 1 yet maugrad 0 2054-12-17 17:28:16.000000000 +0000 wwi-armistice
+-rw-r--r-- 1 yet maugrad 0 2018-11-05 06:53:33.943683000 +0000 now1
+-rw-r--r-- 1 yet maugrad 0 2018-11-05 06:53:28.631186000 +0000 now
+
+This returns the correct order of the files.

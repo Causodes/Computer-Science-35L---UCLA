@@ -1,0 +1,166 @@
+Tian Ye
+704931660
+Assignment 5
+
+Compiled tr2b.c and tr2u.c with following commands:
+gcc -g tr2b.c -o tr2b
+gcc -g tr2u.c -o tr2u
+
+Created testfile with contents abcdef
+Tested c files with the testfile:
+
+./tr2b 'abc' 'def' < testfile
+./tr2u 'abc' 'def' < testfile
+
+Both return expected output of defdef.
+
+Creating a large file to use with the strace command:
+head --bytes=5000000 /dev/urandom > largefile.txt
+
+Using strace commands:
+strace -c -o strace1.txt ./tr2b 'a' 'b' < largefile.txt > tr2b.txt
+strace -c -o strace2.txt ./tr2u 'a' 'b' < largefile.txt > tr2u.txt
+strace -c -o strace3.txt ./tr2b 'a' 'b' < largefile.txt
+strace -c -o strace4.txt ./tr2u 'a' 'b' < largefile.txt
+
+Contents of strace1.txt:
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 52.93    0.000478           1       611           write
+ 22.81    0.000206           0       613           read
+  5.98    0.000054           6         9           mmap
+  5.98    0.000054          54         1           execve
+  2.99    0.000027           7         4           mprotect
+  2.44    0.000022          11         2           open
+  1.99    0.000018           5         4           fstat
+  1.88    0.000017          17         1         1 access
+  1.11    0.000010          10         1           munmap
+  0.78    0.000007           4         2           close
+  0.78    0.000007           7         1           brk
+  0.33    0.000003           3         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.000903                  1250         1 total
+
+
+
+Contents of strace2.txt:
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 55.49   19.996829           4   5000000           write
+ 44.51   16.039084           3   5000002           read
+  0.00    0.000000           0         2           open
+  0.00    0.000000           0         2           close
+  0.00    0.000000           0         2           fstat
+  0.00    0.000000           0         7           mmap
+  0.00    0.000000           0         4           mprotect
+  0.00    0.000000           0         1           munmap
+  0.00    0.000000           0         1           brk
+  0.00    0.000000           0         1         1 access
+  0.00    0.000000           0         1           execve
+  0.00    0.000000           0         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00   36.035913              10000024         1 total
+
+Contents of strace3.txt:
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 97.95    0.076405           4     19887           write
+  2.05    0.001596           3       613           read
+  0.00    0.000000           0         2           open
+  0.00    0.000000           0         2           close
+  0.00    0.000000           0         4           fstat
+  0.00    0.000000           0         9           mmap
+  0.00    0.000000           0         4           mprotect
+  0.00    0.000000           0         1           munmap
+  0.00    0.000000           0         1           brk
+  0.00    0.000000           0         1         1 access
+  0.00    0.000000           0         1           execve
+  0.00    0.000000           0         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.078001                 20526         1 total
+
+Contents of strace4.txt:
+  GNU nano 2.3.1             File: strace4.txt
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 57.86   22.086387           4   5000000           write
+ 42.14   16.087306           3   5000002           read
+  0.00    0.000049          49         1           brk
+  0.00    0.000043           6         7           mmap
+  0.00    0.000041          41         1           execve
+  0.00    0.000030           8         4           mprotect
+  0.00    0.000015           8         2           open
+  0.00    0.000011          11         1         1 access
+  0.00    0.000010          10         1           munmap
+  0.00    0.000007           4         2           fstat
+  0.00    0.000006           3         2           close
+  0.00    0.000003           3         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00   38.173908              10000024         1 total
+
+In both cases it can be seen that the unbuffered variant is far less efficient than the buffered variant. This is due to the fact that the read and write calls are done manually.
+
+Running the time commands:
+time cat largefile.txt | ./tr2b 'a' 'b' > tr2b.txt
+
+Output:
+real    0m0.281s
+user    0m0.222s
+sys     0m0.021s
+
+time cat largefile.txt | ./tr2u 'a' 'b' > tr2u.txt
+
+Output:
+real    0m9.790s
+user    0m1.304s
+sys     0m8.498s
+
+time cat largefile.txt | ./tr2b 'a' 'b'
+
+Output:
+real    0m10.498s
+user    0m0.237s
+sys     0m0.137s
+
+time cat largefile.txt | ./tr2u 'a' 'b'
+
+Output:
+real    0m9.526s
+user    0m1.232s
+sys     0m7.086s
+
+Comparing the user and system times, it can be seen that the buffered version is indeed significantly faster than the unbuffered version.
+
+Compiling sfrobu.c:
+gcc -g sfrobu.c -o sfrobu
+
+Comparing runtimes:
+
+time printf '*~BO *{_CIA *hXE]D *LER #@_GZY #E\\OX #^BO #FKPS #NEM\4' | ./sfrobs
+
+Output:
+real    0m0.002s
+user    0m0.001s
+sys     0m0.001s
+
+time printf '*~BO *{_CIA *hXE]D *LER #@_GZY #E\\OX #^BO #FKPS #NEM\4' | ./sfrobu
+
+Output:
+real    0m0.003s
+user    0m0.001s
+sys     0m0.002s
+
+time ./sfrob < largefile.txt
+
+Output:
+real    0m0.011s
+user    0m0.005s
+sys     0m0.004s
+
+time ./sfrobu < largefile.txt
+
+Output:
+real    0m19.495s
+user    0m1.193s
+sys     0m5.295s

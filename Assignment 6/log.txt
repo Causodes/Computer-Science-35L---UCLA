@@ -1,0 +1,52 @@
+Tian Ye
+704931660
+Assignment 6
+
+Checking version of Coreutils:
+sort --version
+
+sort (GNU coreutils) 8.22
+Copyright (C) 2013 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Written by Mike Haertel and Paul Eggert.
+
+Generating file:
+od -N ((1) << 26) -f /dev/urandom
+
+Noting that the address and following spaces take 10 characters of space; we then translate all remaining spaces to newline characters and remove duplicate spaces:
+od -N $((1 << 26)) -f /dev/urandom | cut -c 10- | tr -s ' ' '\n' | sed 
+'/^$/d' > lines.txt
+
+Verifying number of lines in generated file:
+wc -l lines.txt
+
+16777216 lines.txt
+
+Timing the sort:
+time -p sort -g lines.txt > /dev/null
+real 36.84
+user 200.31
+sys 1.29
+
+time -p sort --parallel=1 lines.txt > /dev/null
+real 137.09
+user 136.33
+sys 0.74
+
+time -p sort --parallel=2 lines.txt > /dev/null
+real 72.19
+user 134.07
+sys 0.95
+
+time -p sort --parallel=4 lines.txt > /dev/null
+real 43.94
+user 136.99
+sys 0.92
+
+time -p sort --parallel=8 lines.txt > /dev/null
+real 31.23
+user 142.38
+sys 1.31

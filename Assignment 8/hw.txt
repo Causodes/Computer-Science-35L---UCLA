@@ -1,0 +1,9 @@
+1. If other teams were monitoring all the bytes moving across the network, the information would nonetheless remain secure as all the data is encrypted. As the information has been encrypted by the public key prior to moving across the network, it can only be decrypted with the private key, which is secure.
+
+If the teams were able to track the keystrokes, the situation would become far less secure; even though they do not have access to the private key, they nonetheless can potentially gain access to the passphrase. If they then gain access to my private computer, they can access the private key.
+
+If the teams were to gain access to the USB, they can gain control of the key via accessing the .ssh folder, thereby compromising the network.
+
+2. Since the --verify command only checks that the signature matches the file, someone can theoretically decrypt the message, change the contents, and create a different detached signature; however, the signature still matches the file. 
+
+To rectify this, we allow a trusted third party with the public key and hence they can track the origin of any changes or messages and stop any issues that seem to come from strange sources. The third party hence acts as verification.

@@ -1,0 +1,50 @@
+Tian Ye
+704931660
+
+Logging onto Beaglebone as root:
+ssh root@192.168.7.1
+
+Finish updating and installing:
+sudo apt-get update
+sudo apt-get install xauth
+sudo apt-get install xvfb
+sudo apt-get install firefox-esr-l10n-en-gb
+sudo apt-get install xterm
+
+Install openssh server and openssh client
+sudo apt-get install openssh-server
+sudo apt-get install openssh-client
+
+Create account for partner:
+sudo useradd -d /home/ryang -m ryang
+sudo passwd ryang
+
+Creating an .ssh directory within the directory:
+cd /home/ryang
+sudo mkdir .ssh
+
+Change ownership on ssh directory:
+sudo chown -R ryang .ssh
+sudo chmod 700 .ssh
+
+Generate RSA key using defaults, stored in .ssh/id_rsa
+ssh-keygen
+
+Following steps are performed on local computer:
+
+Create another private, public key pair
+ssh-keygen
+
+Upload private key to server:
+ssh-copy-id -i yet@10.97.85.172
+
+Add private key to ssh-agent:
+ssh add
+
+Logging in, not password or passphrase required:
+ssh yet@10.97.85.172
+
+Test ssh X forwarding:
+sudo ssh -Y yet@10.97.85.172
+
+For port forwarding, the difference between ssh-x and ssh-y is that ssh -X is treated as an untrusted client whilst ssh -Y is treated as trusted. Hence, for performance ssh -X limited parts of xterm whilst ssh -Y did not. Thus, if ForwardX11Trusted is set to No, ssh -X does not work while ssh -Y does work due to ssh -Y being treated as a trusted client.

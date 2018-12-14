@@ -1,0 +1,133 @@
+Tian Ye
+704931660
+
+Copy Diffutils Folder:
+cp -r ~eggert/src/gnu/diffutils diffutils
+cd diffutils/
+
+Generating git-log and git-tag:
+git log > git-log.txt
+git tag > git-tags.txt
+
+Finding commit:
+emacs git-log.txt
+C-s maint: quote
+
+Commit ID:
+62ca21c8c1a5aa3488589dcb191a4ef04ae9ed4f
+
+Applying Patch:
+git format-patch -1 62ca21c8c1a5aa3488589dcb191a4ef04ae9ed4f --stdout > quote-patch.txt     
+git checkout v3.0
+patch -p1 < quote-patch.txt
+
+Files not found:
+HACKING
+doc/diffutils.texi
+man/help2man
+
+Overview of files:
+git status
+
+# HEAD detached at v3.0
+# Changes not staged for commit:
+#   (use "git add <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#       modified:   NEWS
+#       modified:   README
+#       modified:   TODO
+#       modified:   doc/diagmeet.note
+#       modified:   ms/config.bat
+#       modified:   ms/config.site
+#       modified:   po/en.po
+#       modified:   src/analyze.c
+#       modified:   src/cmp.c
+#       modified:   src/context.c
+#       modified:   src/diff.c
+#       modified:   src/diff.h
+#       modified:   src/diff3.c
+#       modified:   src/dir.c
+#       modified:   src/ifdef.c
+#       modified:   src/io.c
+#       modified:   src/sdiff.c
+#       modified:   src/side.c
+#       modified:   src/system.h
+#       modified:   src/util.c
+#       modified:   tests/help-version
+#
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+#       NEWS.orig
+#       NEWS.rej
+#       README-hacking.orig
+#       README-hacking.rej
+#       README.orig
+#       README.rej
+#       TODO.orig
+#       TODO.rej
+#       cfg.mk.orig
+#       cfg.mk.rej
+#       doc/diagmeet.note.orig
+#       doc/diagmeet.note.rej
+#       git-log.txt
+#       git-tag.txt
+#       ms/config.bat.orig
+#       ms/config.bat.rej
+#       ms/config.site.orig
+#       ms/config.site.rej
+#       po/en.po.orig
+#       po/en.po.rej
+#       quote-patch.txt
+#       src/analyze.c.rej
+#       src/cmp.c.orig
+#       src/cmp.c.rej
+#       src/context.c.orig
+#       src/context.c.rej
+#       src/diff.c.orig
+#       src/diff.c.rej
+#       src/diff.h.orig
+#       src/diff.h.rej
+#       src/diff3.c.orig
+#       src/diff3.c.rej
+#       src/dir.c.orig
+#       src/dir.c.rej
+#       src/ifdef.c.orig
+#       src/ifdef.c.rej
+#       src/io.c.orig
+#       src/io.c.rej
+#       src/sdiff.c.orig
+#       src/sdiff.c.rej
+#       src/side.c.orig
+#       src/side.c.rej
+#       src/system.h.orig
+#       src/system.h.rej
+#       src/util.c.orig
+#       src/util.c.rej
+#       tests/help-version.orig
+#       tests/help-version.rej
+
+For each modified file besides those ending in .c:
+Open in emacs
+C-x v =
+(Gives difference and ensures edits are the ones applied)
+C-x v u
+yes
+C-x C-c
+(Reverts changes made to file)
+
+For each file ending in .c:
+Check if patch is applied to string literal
+If yes, continue.
+Otherwise, undo change to hunk via C-u C-c C-a
+
+Finishing up:
+git clean -file
+git diff > quote-3.0-patch.txt
+
+Then:
+./bootstrap
+./configure
+make
+make check

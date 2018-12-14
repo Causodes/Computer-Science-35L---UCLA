@@ -1,0 +1,8 @@
+The interface is primarily comprised of two major windows:
+The top half appears to be metadata, consisting of three parts:
+	The leftmost portion is the commit tree; a visualization of the project history that displays all the branches
+	The center lists the author of each change, branch, and merge
+	The right shows the modification date of the change, branch, and merge
+The bottom half contains what appears to be actual content:
+	The lefthand side contains various information such as author, the parent and child of the tree, branches, order, etc. Underneath it contains options for viewing other versions of the file, as well as a diff file.
+	The righthand side is labled as "Comment" and contains other files and trees involved with the change.

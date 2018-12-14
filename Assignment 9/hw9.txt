@@ -1,0 +1,43 @@
+Checking Out v3.0 of Diffutils into branch "quote":
+git checkout v3.0
+git checkout -b quote
+cp ../quote-3.0-patch.txt ./
+
+Applying Patch:
+patch -p1 <quote-3.0-patch.txt
+
+Updating Changelog:
+For each modified file:
+emacs
+C-x 4 a
+
+Committing:
+git clean -f
+git add src/<filename>
+git commit -F ChangeLog
+
+Using Partner's Patch:
+git checkout v3.0
+git checkout -b patch_partner
+
+Coping Partner's patch.txt:
+git am patch.txt
+
+Repeating the Build Process:
+./bootstrap
+Copy the gets.diff in and run
+patch -p0<gets.diff
+./configure
+make
+make check
+
+Verifying Changelog:
+make distdir
+
+diffutils*/ChangeLog is just the changelog I wrote.
+
+Testing gitk:
+git clone ~eggert/src/gnu/emacs
+cd emacs
+
+Now I just examine the window and find the newest merge point.
